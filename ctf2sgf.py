@@ -108,10 +108,21 @@ class GoFragment:
 			result+= 'LB'
 			for sample in marks:
 				result += '[' + sample.point + ':' + sample.mark + ']'
-		result+= 'C[' + self.preambula + '\n\n' + self.PrintInfo() + ']'		
-		for move in self.moves:
-			result+= '\n;' + move.color + '[' + move.point + ']';	
 		
+		for move in self.moves:
+			result+= '\n;' + move.color + '[' + move.point + ']';
+		i = 1
+		result+= 'LB'
+		for move in self.moves:
+			result+= '[%s:%d]'%(move.point,i) 
+			i+=1
+		for sample in marks:
+			result += '[' + sample.point + ':' + sample.mark + ']'
+		if len(specialMarks)!=0:
+			result+= 'CR'
+			for sample in specialMarks:
+				result += '[' + sample.point + ']' 
+		result+= 'C[' + self.preambula + '\n\n' + self.PrintInfo() + ']'		
 		result += ')\n'
 		return result
 		
@@ -132,7 +143,7 @@ class GoFragment:
 class GoGameFile:
 	
 	def __init__(self,filename):
-		file = open(input)
+		file = open(filename)
 		data = file.read()
 		lines = data.split('\n');
 		#striping removing empty strings:
@@ -165,6 +176,7 @@ class GoGameFile:
 RU[Japanese]SZ[19]KM[0.00]
 PW[White]PB[Black]\n"""
 		result = intro
+		result += 'C[Converted by ctf2sgf.\n\n https://github.com/sorokinpf/ctf2sgf]\n'
 		for fragment in self.fragments:
 			result+=fragment.ToSGF()
 		result += ')'
